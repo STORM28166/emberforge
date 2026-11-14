@@ -838,7 +838,9 @@ const FACES = [
 const AO_SHADE = [1, 0.82, 0.68, 0.52]; // vertex AO by # of occluders
 function buildChunk(cx, cz){
   const key = cx+','+cz, old = chunkMeshes.get(key);
-  if(old){ scene.remove(old.g); old.g.geometry.dispose(); if(old.w){ scene.remove(old.w); old.w.geometry.dispose(); } chunkMeshes.delete(key); }
+  if(old){ scene.remove(old.g);
+    old.g.traverse(o=>{ if(o.geometry) o.geometry.dispose(); if(o.material && o.material!==glassMat) o.material.dispose(); });
+    chunkMeshes.delete(key); }
   const pos=[], nor=[], uv=[], col=[], idx=[], gpos=[], guv=[], gidx=[];
   const x0=cx*CH, z0=cz*CH;
   const aoAt=(x,y,z)=> SOLID(getB(x,y,z)) && OPAQUE(getB(x,y,z)) ? 1:0;
